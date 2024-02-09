@@ -1,4 +1,7 @@
-class problem():
+from data_management import *
+
+
+class Problem():
     def __init__(self,
                  hours, 
                  pv_production, 
@@ -27,8 +30,9 @@ class problem():
 def main():
     """
     The main entrypoint for this script
-    Used in the setup.py file
     """
+    read_inputs()
+    problem = Problem()
     problem.my_function()
     print('check')
 
