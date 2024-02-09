@@ -46,12 +46,12 @@ class Problem_Linear_constraint (Problem):
                     + self.levelized_cost_of_storage[i] * model.charge_battery[i] for i in self.hours)
             ,sense=minimize)
 
-        # Constraints
+        # Constraint for energy balance
         def energy_balance_rule(model, i):
             return self.pv_production[i] + model.discharge_battery[i] + model.buy_from_grid[i] \
                 == self.electrical_consumption[i] + (1.0/self.storage_efficiency) * model.charge_battery[i] + model.sell_to_grid[i]
 
-
+        # Constraint for battery capacity balance
         def battery_capacity_rule(model, i):
             if i > 0:
                 return model.battery_capacity[i] ==  model.battery_capacity[i-1] \
@@ -60,7 +60,7 @@ class Problem_Linear_constraint (Problem):
             else: 
                 return model.battery_capacity[i] ==  0
 
-
+        # Constraint for buying electricity when PV power exceeds the consumption
         def buy_from_grid_rule(model, i):
             if self.pv_production[i] >= self.electrical_consumption[i]:
                 return model.buy_from_grid[i] == 0
