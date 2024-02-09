@@ -49,9 +49,10 @@ class Problem():
         
         return model
 
+
     def solve_model(self, model):
         # Solve the problem
-        solver = SolverFactory('glpk')  # You can replace 'glpk' with another solver if needed        
+        solver = SolverFactory('glpk')  # Replace 'glpk' with another solver if needed        
         solver.solve(model)
 
         return model

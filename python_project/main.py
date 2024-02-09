@@ -37,7 +37,8 @@ def main():
                 max_buy_from_grid)
 
     model = problem.create_model()
-    model = problem.solve_model(model)
+    model_with_constraints = problem.add_constraints(model)
+    model = problem.solve_model(model_with_constraints)
     
     print("problem is solved.")
     display_solution(

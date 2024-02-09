@@ -28,24 +28,8 @@ class Problem_Linear_constraint (Problem):
         self.max_sell_to_grid = max_sell_to_grid
         self.max_buy_from_grid = max_buy_from_grid
 
-    def create_model(self):
 
-        model = ConcreteModel()
-
-        # Decision variables
-        model.buy_from_grid = Var(self.hours, bounds=(0, self.max_buy_from_grid))
-        model.sell_to_grid = Var(self.hours, bounds=(0, self.max_sell_to_grid))
-        model.charge_battery = Var(self.hours, bounds=(0, self.max_charging_rate))
-        model.discharge_battery = Var(self.hours, bounds=(0, self.max_charging_rate))
-        model.battery_capacity = Var(self.hours, bounds=(0, self.battery_capacity))
-
-        # Objective function
-        model.objective = Objective(
-            expr=sum(self.buy_prices[i] * model.buy_from_grid[i] \
-                    - self.sell_prices[i] * model.sell_to_grid[i] \
-                    + self.levelized_cost_of_storage[i] * model.charge_battery[i] for i in self.hours)
-            ,sense=minimize)
-
+    def add_constraints_section_a(self, model):
         # Constraint for energy balance
         def energy_balance_rule(model, i):
             return self.pv_production[i] + model.discharge_battery[i] + model.buy_from_grid[i] \
@@ -72,12 +56,4 @@ class Problem_Linear_constraint (Problem):
         model.energy_balance_constraint = Constraint(self.hours, rule=energy_balance_rule)
         model.buy_from_grid_constraint = Constraint(self.hours, rule=buy_from_grid_rule)
         
-        return model
-    
-
-    def solve_model(self, model):
-        # Solve the problem
-        solver = SolverFactory('glpk')  # You can replace 'glpk' with another solver if needed        
-        solver.solve(model)
-
         return model
