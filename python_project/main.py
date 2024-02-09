@@ -9,18 +9,13 @@ def main():
     """
     dataset = read_inputs()
 
-        # Prediction horizon (48 hours)
-    hours = np.arange(48)
+    hours = np.arange(48)  # Prediction horizon (48 hours)
+    pv_production = dataset['pv production, kWh']  # Production predictions for the photovoltaic system
+    electrical_consumption = dataset['electrical consumption, kWh']  # Total electrical consumption(in kWh)
+    buy_prices = dataset['electricity buying price c/kWh']  # Energy price for buying over the prediction horizon (in c/kWh)
+    sell_prices = dataset['electricity selling price, c/kWh']  # Energy price for selling over the prediction horizon (in c/kWh)
 
-    # Production predictions for the photovoltaic system and the total electrical consumption(in kWh)
-    pv_production = dataset['pv production, kWh']
-    electrical_consumption = dataset['electrical consumption, kWh']
-
-    # Energy prices for buying and selling over the prediction horizon (in c/kWh)
-    buy_prices = dataset['electricity buying price c/kWh']  
-    sell_prices = dataset['electricity selling price, c/kWh']
-
-    # Define battery characteristics
+    # Define battery and grid characteristics
     levelized_cost_of_storage = dataset['lcos, c/kWh']  
     battery_capacity = 160  # kWh
     max_charging_rate = 100  # kW
@@ -42,7 +37,21 @@ def main():
                 max_buy_from_grid)
 
     model = problem.create_model()
-    problem.solve_model(model)
+    model = problem.solve_model(model)
+    
+    print("problem is solved.")
+    display_solution(
+        hours,
+        pv_production,
+        electrical_consumption,
+        model.battery_capacity,
+        model.buy_from_grid,
+        model.sell_to_grid,
+        model.charge_battery,
+        model.discharge_battery,
+        model.objective
+    )
+ 
 
 if __name__ == "__main__":
     main()

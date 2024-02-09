@@ -80,19 +80,4 @@ class Problem_Linear_constraint (Problem):
         solver = SolverFactory('glpk')  # You can replace 'glpk' with another solver if needed        
         solver.solve(model)
 
-        # Display the optimal energy flows
-        for i in self.hours:
-            print(f"Hour {i+1}:")
-            print(f"  PV Production: {self.pv_production[i]} kWh")
-            print(f"  Electrical Consumption: {self.electrical_consumption[i]} kWh")
-            print(f"  Electricity Gap: {self.pv_production[i] - self.electrical_consumption[i]} kWh")
-            if i>0:
-                print(f"  Battery Capacity: {model.battery_capacity[i]()} kWh")
-            print(f"  Buy from Grid: {model.buy_from_grid[i]()} kWh")
-            print(f"  Sell to Grid: {model.sell_to_grid[i]()} kWh")
-            print(f"  Charge Battery: {model.charge_battery[i]()} kWh")
-            print(f"  Discharge Battery: {model.discharge_battery[i]()} kWh")
-            print()
-
-            # Display the total cost
-            print(f"Total Cost: Euro {round(model.objective()/100, 2)}")
+        return model
