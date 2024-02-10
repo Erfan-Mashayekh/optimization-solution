@@ -44,7 +44,6 @@ class Problem():
         self.max_buy_from_grid = max_buy_from_grid
 
         
-
     def create_model(self):
         """
         Creates a Pyomo ConcreteModel representing the optimization problem.

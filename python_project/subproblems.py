@@ -2,9 +2,6 @@ from pyomo.environ import *
 from main_problem import Problem
 
 
-"""
-Developed constraints for section A
-"""
 class Problem_a (Problem):
     def __init__(self,
                  hours, 
@@ -109,10 +106,6 @@ class Problem_a (Problem):
         return model 
 
 
-
-"""
-Developed constraints for section B
-"""
 class Problem_b (Problem):
     def __init__(self,
                  hours, 

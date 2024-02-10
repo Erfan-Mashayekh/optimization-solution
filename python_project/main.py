@@ -8,7 +8,8 @@ def main():
     """
     dataset = read_inputs()
 
-    hours = np.arange(48)  # Prediction horizon (48 hours)
+    time = dataset['datetime']
+    hours = np.arange(np.size(time))  # Prediction horizon (48 hours)
     pv_production = dataset['pv production, kWh']  # Production predictions for the photovoltaic system
     electrical_consumption = dataset['electrical consumption, kWh']  # Total electrical consumption(in kWh)
     buy_prices = dataset['electricity buying price c/kWh']  # Energy price for buying over the prediction horizon (in c/kWh)
