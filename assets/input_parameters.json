@@ -1,0 +1,10 @@
+{
+
+"max_battery_capacity" : 160,
+"max_charging_rate" : 100,
+"storage_efficiency" : 0.92,
+"max_sell_to_grid" : 700,
+"max_buy_from_grid" : 700,
+"problem" : "A"
+
+}

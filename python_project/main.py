@@ -1,7 +1,6 @@
 import numpy as np
-from data_management import *
-from problem import Problem
-from linear_constraints import Problem_Linear_constraint
+from data_management import read_inputs, read_control_inputs, display_solution, plot_trend
+from subproblems import Problem_a, Problem_b
 
 def main():
     """
@@ -15,28 +14,53 @@ def main():
     buy_prices = dataset['electricity buying price c/kWh']  # Energy price for buying over the prediction horizon (in c/kWh)
     sell_prices = dataset['electricity selling price, c/kWh']  # Energy price for selling over the prediction horizon (in c/kWh)
 
+    control_data = read_control_inputs()
+
     # Define battery and grid characteristics
     levelized_cost_of_storage = dataset['lcos, c/kWh']  
-    battery_capacity = 160  # kWh
-    max_charging_rate = 100  # kW
-    storage_efficiency = 0.92
-    max_sell_to_grid = 700 # kw
-    max_buy_from_grid = 700 # kw
+    max_battery_capacity = control_data["max_battery_capacity"]
+    max_charging_rate = control_data["max_charging_rate"]
+    storage_efficiency = control_data["storage_efficiency"]
+    max_sell_to_grid = control_data["max_sell_to_grid"]
+    max_buy_from_grid = control_data["max_buy_from_grid"]
 
-    problem = Problem_Linear_constraint(
-                hours, 
-                pv_production, 
-                electrical_consumption, 
-                buy_prices, 
-                sell_prices,
-                levelized_cost_of_storage,
-                battery_capacity,
-                max_charging_rate,
-                storage_efficiency,
-                max_sell_to_grid,
-                max_buy_from_grid)
+    # Select problem
+    section = control_data["problem"]
+
+
+    if section == "A" :
+        # Solve problem A
+        problem = Problem_a(
+                    hours, 
+                    pv_production, 
+                    electrical_consumption, 
+                    buy_prices, 
+                    sell_prices,
+                    levelized_cost_of_storage,
+                    max_battery_capacity,
+                    max_charging_rate,
+                    storage_efficiency,
+                    max_sell_to_grid,
+                    max_buy_from_grid)
+    elif section == "B":
+        # Solve problem B
+        problem = Problem_b(
+                    hours, 
+                    pv_production, 
+                    electrical_consumption, 
+                    buy_prices, 
+                    sell_prices,
+                    levelized_cost_of_storage,
+                    max_battery_capacity,
+                    max_charging_rate,
+                    storage_efficiency,
+                    max_sell_to_grid,
+                    max_buy_from_grid)
+    elif section == "C":
+        pass
 
     model = problem.create_model()
+    model = problem.add_extra_to_model(model) # Activates only for section B
     model_with_constraints = problem.add_constraints(model)
     model = problem.solve_model(model_with_constraints)
     
@@ -52,7 +76,16 @@ def main():
         model.discharge_battery,
         model.objective
     )
- 
+    plot_trend(
+        hours,
+        pv_production,
+        electrical_consumption,
+        model.battery_capacity,
+        model.buy_from_grid,
+        model.sell_to_grid,
+        model.charge_battery,
+        model.discharge_battery,
+    )
 
 if __name__ == "__main__":
     main()
